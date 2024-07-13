@@ -1,0 +1,15 @@
+.grid {
+    display: flex;
+    flex-direction: row;
+
+    .row {
+        .cell {
+            width: 80px;
+        }
+    }
+}
+
+input {
+    font-size: 20px;
+    width: 100%;
+}
