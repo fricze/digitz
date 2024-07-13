@@ -137,7 +137,7 @@ const App = () => {
   );
 
   const activeCellValue =
-    activeCell === emptyCellIdx ? null : grid[activeCell[0]][activeCell[1]];
+    activeCell === emptyCellIdx ? "" : grid[activeCell[0]][activeCell[1]];
 
   return (
     <div className="App">
