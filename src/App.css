@@ -1,15 +1,51 @@
+:root {
+    --input-width: 80px;
+    --input-height: 26px;
+}
+
+input {
+    all: unset;
+}
+
+* {
+    box-sizing: border-box;
+}
+
 .grid {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    outline: 1px solid #ddd;
+    width: fit-content;
 
     .row {
+        display: flex;
+        flex-direction: row;
+
         .cell {
-            width: 80px;
+            flex-basis: var(--input-width);
+            height: var(--input-height);
+
+            &,
+            input {
+                width: var(--input-width);
+            }
         }
     }
 }
 
+input,
+.cell span {
+    height: 100%;
+
+    padding: 0 4px;
+}
+
 input {
-    font-size: 20px;
-    width: 100%;
+    box-sizing: border-box;
+
+    border: 1px solid #ddd;
+    &:focus-visible {
+        border: 1px solid deeppink;
+        position: relative;
+    }
 }
