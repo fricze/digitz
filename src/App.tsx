@@ -2,12 +2,10 @@ import { useEffect, useRef, useState } from "react";
 import "./App.css";
 import Mexp from "math-expression-evaluator";
 
-type FocusedCell = string;
-type CellIdxSet = Set<FocusedCell>;
+type CellIdxSet = [[number, number], [number, number]];
 type SetFocusedCell = React.Dispatch<React.SetStateAction<CellIdxSet>>;
 
 const emptyCellIdx: CellIdx = [-1, -1];
-const emptyCellSet: Set<string> = new Set([``]);
 
 const updateGridValue = (
   grid: Array<Array<string | number>>,
@@ -59,7 +57,13 @@ const Cell = ({
     calc = "Error";
   }
 
-  const isFocused = focusedCell.has(`${rowIdx},${cellIdx}`);
+  const start = focusedCell[0];
+  const end = focusedCell[1];
+  const isFocused =
+    rowIdx >= start[0] &&
+    cellIdx >= start[1] &&
+    rowIdx <= end[0] &&
+    cellIdx <= end[1];
 
   const cellId = `${rowIdx},${cellIdx}`;
 
@@ -80,7 +84,10 @@ const Cell = ({
         if (isFocused) {
           setActiveCell([rowIdx, cellIdx]);
         } else {
-          setFocusedCell(new Set([`${rowIdx},${cellIdx}`]));
+          setFocusedCell([
+            [rowIdx, cellIdx],
+            [rowIdx, cellIdx],
+          ]);
         }
       }}
       tabIndex={isActive ? -1 : 0}
@@ -88,30 +95,34 @@ const Cell = ({
         if (isShiftHeld) {
           if (e.key === "ArrowUp") {
             setActiveCell(emptyCellIdx);
+
             const cellId = `${rowIdx - 1},${cellIdx}`;
             setMainFocusedCell(cellId);
-            return setFocusedCell((cells) => new Set(cells).add(cellId));
+            return setFocusedCell(([a, [x, y]]) => [a, [x - 1, y]]);
           }
 
           if (e.key === "ArrowDown") {
             setActiveCell(emptyCellIdx);
+
             const cellId = `${rowIdx + 1},${cellIdx}`;
             setMainFocusedCell(cellId);
-            return setFocusedCell((cells) => new Set(cells).add(cellId));
+            return setFocusedCell(([a, [x, y]]) => [a, [x + 1, y]]);
           }
 
           if (e.key === "ArrowLeft") {
             setActiveCell(emptyCellIdx);
+
             const cellId = `${rowIdx},${cellIdx - 1}`;
             setMainFocusedCell(cellId);
-            return setFocusedCell((cells) => new Set(cells).add(cellId));
+            return setFocusedCell(([a, [x, y]]) => [a, [x, y - 1]]);
           }
 
           if (e.key === "ArrowRight") {
             setActiveCell(emptyCellIdx);
+
             const cellId = `${rowIdx},${cellIdx + 1}`;
             setMainFocusedCell(cellId);
-            return setFocusedCell((cells) => new Set(cells).add(cellId));
+            return setFocusedCell(([a, [x, y]]) => [a, [x, y + 1]]);
           }
         }
 
@@ -120,8 +131,12 @@ const Cell = ({
             return setActiveCell([rowIdx, cellIdx]);
           } else {
             const cellId = `${rowIdx},${cellIdx}`;
+
             setMainFocusedCell(cellId);
-            setFocusedCell(new Set([cellId]));
+            setFocusedCell([
+              [rowIdx, cellIdx],
+              [rowIdx, cellIdx],
+            ]);
             return setActiveCell(emptyCellIdx);
           }
         }
@@ -131,14 +146,22 @@ const Cell = ({
 
           const cellId = `${rowIdx - 1},${cellIdx}`;
           setMainFocusedCell(cellId);
-          return setFocusedCell(new Set([cellId]));
+          return setFocusedCell([
+            [rowIdx - 1, cellIdx],
+            [rowIdx - 1, cellIdx],
+          ]);
         }
 
         if (e.key === "ArrowDown") {
           setActiveCell(emptyCellIdx);
+
           const cellId = `${rowIdx + 1},${cellIdx}`;
           setMainFocusedCell(cellId);
-          return setFocusedCell(new Set([cellId]));
+
+          return setFocusedCell([
+            [rowIdx + 1, cellIdx],
+            [rowIdx + 1, cellIdx],
+          ]);
         }
 
         if (e.key === "ArrowLeft") {
@@ -146,7 +169,11 @@ const Cell = ({
 
           const cellId = `${rowIdx},${cellIdx - 1}`;
           setMainFocusedCell(cellId);
-          return setFocusedCell(new Set([cellId]));
+
+          return setFocusedCell([
+            [rowIdx, cellIdx - 1],
+            [rowIdx, cellIdx - 1],
+          ]);
         }
 
         if (e.key === "ArrowRight") {
@@ -154,7 +181,11 @@ const Cell = ({
 
           const cellId = `${rowIdx},${cellIdx + 1}`;
           setMainFocusedCell(cellId);
-          return setFocusedCell(new Set([cellId]));
+
+          return setFocusedCell([
+            [rowIdx, cellIdx + 1],
+            [rowIdx, cellIdx + 1],
+          ]);
         }
       }}
     >
@@ -246,7 +277,7 @@ const Grid = ({
 
 const App = () => {
   const [activeCell, setActiveCell] = useState<CellIdx>(emptyCellIdx);
-  const [focusedCell, setFocusedCell] = useState<CellIdxSet>(emptyCellSet);
+  const [focusedCell, setFocusedCell] = useState<CellIdxSet>(emptyCellIdx);
   const [mainFocusedCell, setMainFocusedCell] = useState<string>(``);
 
   const [grid, setGrid] = useState<Array<Array<number | string>>>(
