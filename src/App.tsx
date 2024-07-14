@@ -57,13 +57,14 @@ const Cell = ({
     calc = "Error";
   }
 
-  const start = focusedCell[0];
-  const end = focusedCell[1];
+  const top = Math.min(focusedCell[0][0], focusedCell[1][0]);
+  const bottom = Math.max(focusedCell[0][0], focusedCell[1][0]);
+
+  const left = Math.min(focusedCell[0][1], focusedCell[1][1]);
+  const right = Math.max(focusedCell[0][1], focusedCell[1][1]);
+
   const isFocused =
-    rowIdx >= start[0] &&
-    cellIdx >= start[1] &&
-    rowIdx <= end[0] &&
-    cellIdx <= end[1];
+    rowIdx >= top && rowIdx <= bottom && cellIdx >= left && cellIdx <= right;
 
   const cellId = `${rowIdx},${cellIdx}`;
 
@@ -277,7 +278,10 @@ const Grid = ({
 
 const App = () => {
   const [activeCell, setActiveCell] = useState<CellIdx>(emptyCellIdx);
-  const [focusedCell, setFocusedCell] = useState<CellIdxSet>(emptyCellIdx);
+  const [focusedCell, setFocusedCell] = useState<CellIdxSet>([
+    emptyCellIdx,
+    emptyCellIdx,
+  ]);
   const [mainFocusedCell, setMainFocusedCell] = useState<string>(``);
 
   const [grid, setGrid] = useState<Array<Array<number | string>>>(
