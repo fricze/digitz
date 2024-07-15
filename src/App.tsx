@@ -34,8 +34,6 @@ interface CellProps {
   isActive: boolean;
   // focusedCell: CellIdxSet;
   // setFocusedCell: SetFocusedCell;
-  isShiftHeld: boolean;
-  setIsShiftHeld: React.Dispatch<React.SetStateAction<boolean>>;
   mainFocusedCell: string;
   setMainFocusedCell: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -49,7 +47,6 @@ const Cell = ({
   isActive,
   // focusedCell,
   // setFocusedCell,
-  isShiftHeld,
   mainFocusedCell,
   setMainFocusedCell,
 }: CellProps) => {
@@ -77,12 +74,13 @@ const Cell = ({
     rowIdx >= top && rowIdx <= bottom && cellIdx >= left && cellIdx <= right;
 
   const cellId = `${rowIdx},${cellIdx}`;
+  const isMainFocused = mainFocusedCell === cellId;
 
   useEffect(() => {
-    if (mainFocusedCell === cellId) {
+    if (isMainFocused) {
       ref.current?.focus();
     }
-  }, [mainFocusedCell]);
+  }, [isMainFocused]);
 
   return (
     <div
@@ -103,7 +101,7 @@ const Cell = ({
       }}
       tabIndex={isActive ? -1 : 0}
       onKeyDown={(e) => {
-        if (isShiftHeld) {
+        if (e.shiftKey) {
           if (e.key === "ArrowUp") {
             setActiveCell(emptyCellIdx);
 
@@ -249,21 +247,11 @@ const Grid = ({
   mainFocusedCell: string;
   setMainFocusedCell: React.Dispatch<React.SetStateAction<string>>;
 }) => {
-  const [isShiftHeld, setIsShiftHeld] = useState(false);
-
   return (
     <div
       className="grid"
-      onKeyDown={(e) => {
-        if (e.key === "Shift") {
-          setIsShiftHeld(true);
-        }
-      }}
+      onKeyDown={(e) => {}}
       onKeyUp={(e) => {
-        if (e.key === "Shift") {
-          setIsShiftHeld(false);
-        }
-
         if (e.key === "Enter" && e.ctrlKey) {
           alert("ctrl + enter");
         }
@@ -282,8 +270,6 @@ const Grid = ({
               isActive={activeCell[0] === rowIdx && activeCell[1] === cellIdx}
               // focusedCell={focusedCell}
               // setFocusedCell={setFocusedCell}
-              isShiftHeld={isShiftHeld}
-              setIsShiftHeld={setIsShiftHeld}
               mainFocusedCell={mainFocusedCell}
               setMainFocusedCell={setMainFocusedCell}
             />
