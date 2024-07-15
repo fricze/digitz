@@ -32,8 +32,6 @@ interface CellProps {
   cellIdx: number;
   setGrid: React.Dispatch<React.SetStateAction<Grid>>;
   isActive: boolean;
-  // focusedCell: CellIdxSet;
-  // setFocusedCell: SetFocusedCell;
   mainFocusedCell: string;
   setMainFocusedCell: React.Dispatch<React.SetStateAction<string>>;
 }
@@ -45,8 +43,6 @@ const Cell = ({
   cellIdx,
   setGrid,
   isActive,
-  // focusedCell,
-  // setFocusedCell,
   mainFocusedCell,
   setMainFocusedCell,
 }: CellProps) => {
@@ -233,8 +229,6 @@ const Grid = ({
   grid,
   setGrid,
   activeCell,
-  // focusedCell,
-  // setFocusedCell,
   mainFocusedCell,
   setMainFocusedCell,
 }: {
@@ -242,18 +236,28 @@ const Grid = ({
   setActiveCell: React.Dispatch<React.SetStateAction<CellIdx>>;
   activeCell: CellIdx;
   setGrid: React.Dispatch<React.SetStateAction<Grid>>;
-  // focusedCell: CellIdxSet;
-  // setFocusedCell: SetFocusedCell;
   mainFocusedCell: string;
   setMainFocusedCell: React.Dispatch<React.SetStateAction<string>>;
 }) => {
+  const focusedCell = useContext(FocusedCellContext);
+
+  const top = Math.min(focusedCell[0][0], focusedCell[1][0]);
+  const bottom = Math.max(focusedCell[0][0], focusedCell[1][0]);
+
+  const left = Math.min(focusedCell[0][1], focusedCell[1][1]);
+  const right = Math.max(focusedCell[0][1], focusedCell[1][1]);
+
   return (
     <div
       className="grid"
-      onKeyDown={(e) => {}}
-      onKeyUp={(e) => {
-        if (e.key === "Enter" && e.ctrlKey) {
-          alert("ctrl + enter");
+      onKeyDown={(e) => {
+        const selectedCells = grid
+          .slice(top, bottom + 1)
+          .map((row) => row.slice(left, right + 1).join(" "))
+          .join("\n");
+
+        if (e.metaKey && e.key === "c") {
+          navigator.clipboard.writeText(selectedCells);
         }
       }}
     >
@@ -268,8 +272,6 @@ const Grid = ({
               cellIdx={cellIdx}
               setGrid={setGrid}
               isActive={activeCell[0] === rowIdx && activeCell[1] === cellIdx}
-              // focusedCell={focusedCell}
-              // setFocusedCell={setFocusedCell}
               mainFocusedCell={mainFocusedCell}
               setMainFocusedCell={setMainFocusedCell}
             />
@@ -292,6 +294,13 @@ const App = () => {
     new Array(15).fill(0).map(() => new Array(15).fill(0)),
   );
 
+  // console.log(activeCell);
+
+  // console.log(grid);
+
+  console.log(activeCell[0]);
+  console.log(activeCell[1]);
+
   const activeCellValue =
     activeCell === emptyCellIdx ? "" : grid[activeCell[0]][activeCell[1]];
 
@@ -308,8 +317,6 @@ const App = () => {
             grid={grid}
             setGrid={setGrid}
             activeCell={activeCell}
-            // focusedCell={focusedCell}
-            // setFocusedCell={setFocusedCell}
             mainFocusedCell={mainFocusedCell}
             setMainFocusedCell={setMainFocusedCell}
           />
